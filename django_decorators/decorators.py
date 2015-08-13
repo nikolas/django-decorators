@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
+import json
 from django.http import HttpResponse, HttpResponseBadRequest,\
                         HttpResponseNotAllowed
-try:
-    from django.utils import simplejson
-except:
-    import json as simplejson
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core import serializers
 from django.db.models.query import QuerySet
@@ -46,13 +43,13 @@ def json_response(func):
             if isinstance(objects, QuerySet):
                 data = serializers.serialize("json", objects)
             else:
-                data = simplejson.dumps(objects, cls=DjangoJSONEncoder)
+                data = json.dumps(objects, cls=DjangoJSONEncoder)
             if 'callback' in request.REQUEST:
                 # a jsonp response!
                 data = '%s(%s);' % (request.REQUEST['callback'], data)
                 return HttpResponse(data, "application/javascript")
         except:
-            data = simplejson.dumps(str(objects), cls=DjangoJSONEncoder)
+            data = json.dumps(str(objects), cls=DjangoJSONEncoder)
         return HttpResponse(data, "application/json")
     return decorator
 
